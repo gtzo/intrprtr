@@ -99,7 +99,7 @@ func (rs *ReturnStatement) String() string {
 }
 
 type ExpressionStatement struct {
-	Token token.Token
+	Token token.Token // first token of the expression
 	Expression Expression
 }
 
@@ -112,4 +112,13 @@ func (es *ExpressionStatement) String() string {
 	}
 	return ""
 }
+
+type IntegerLiteral struct {
+	Token token.Token
+	Value int64
+}
+
+func (il *IntegerLiteral) expressionNode() {}
+func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
+func (il *IntegerLiteral) String() string { return il.Token.Literal }
 
