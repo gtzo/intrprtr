@@ -19,6 +19,7 @@ func New(input string) *Lexer {
 }
 
 // only support ASCII! so we can deal with one byte at a time and not use runes
+// XXX how would this break for > ASCII?
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0 // scrolled past the end
@@ -128,6 +129,7 @@ func isDigit(ch byte) bool {
 	return '0' <= ch  && ch <= '9'
 }
 
+// XXX how would this break for alphanumeric combos?
 func (l *Lexer) readIdentifier() string {
 	position := l.position
 	for isLetter(l.ch) { // while it's a letter

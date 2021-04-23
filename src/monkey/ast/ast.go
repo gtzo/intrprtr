@@ -1,6 +1,7 @@
 package ast
 
-import ( "monkey/token"
+import (
+	"monkey/token"
 	"bytes"
 )
 
@@ -11,7 +12,7 @@ type Node interface {
 
 type Statement interface {
 	Node
-	statementNode()
+	statementNode() // XXX why doesn't this need a return type?
 }
 
 type Expression interface {
@@ -44,8 +45,8 @@ func (p *Program) String() string {
 // implicitly implements Statement
 type LetStatement struct {
 	Token token.Token // the token.LET token
-	Name *Identifier
-	Value Expression
+	Name *Identifier // XXX why is this a pointer?
+	Value Expression  //  XXX  also ;in the diagram on page 35 it's shown as a pointer
 }
 
 func (ls *LetStatement) statementNode() {}
@@ -83,7 +84,6 @@ type ReturnStatement struct {
 
 func (rs *ReturnStatement) statementNode() {} // why the hell is this here still
 func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal } // debugging i guess
-
 func (rs *ReturnStatement) String() string {
 	var out bytes.Buffer
 
@@ -122,3 +122,42 @@ func (il *IntegerLiteral) expressionNode() {}
 func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
 func (il *IntegerLiteral) String() string { return il.Token.Literal }
 
+type PrefixExpression struct {
+	Token token.Token
+	Operator string
+	Right Expression
+}
+
+func (pe *PrefixExpression) expressionNode() {}
+func (pe *PrefixExpression) TokenLiteral() string { return pe.Token.Literal }
+func (pe *PrefixExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(pe.Operator)
+	out.WriteString(pe.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
+
+type InfixExpression struct {
+	Token token.Token
+	Left Expression
+	Operator string
+	Right Expression
+}
+
+func (oe *InfixExpression) expressionNode() {}
+func (oe *InfixExpression) TokenLiteral() string { return oe.Token.Literal }
+func (oe *InfixExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(oe.Right.String())
+	out.WriteString(" " + oe.Operator + " ")
+	out.WriteString(oe.Left.String())
+	out.WriteString(")")
+
+	return out.String()
+}
